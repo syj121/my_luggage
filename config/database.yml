@@ -1,0 +1,17 @@
+default: &default
+ adapter: mysql2
+ pool: 5
+ timeout: 5000
+ host: 127.0.0.1
+ database: my_luggage
+ username: root
+ password: 123
+
+development:
+ <<: *default
+
+test:
+ <<: *default
+
+production:
+  <<: *default
