@@ -74,3 +74,5 @@ gem 'pry-rails', '0.3.2'
 gem "carrierwave"
 #树形结构
 gem "ancestry"
+#
+gem 'simple_captcha2', require: 'simple_captcha'
