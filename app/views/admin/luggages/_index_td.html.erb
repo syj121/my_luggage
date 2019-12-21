@@ -1,0 +1,12 @@
+<td><%= luggage.no %></td>
+<td><%= luggage.user_name%></td>
+<td><%= Luggage::CARD_TYPE[luggage.card_type]%></td>
+<td><%= luggage.store_at.to_s %></td>
+<td><%= luggage.items_count%></td>
+<td><%= Luggage::PAY_STATUS[luggage.pay_status]%></td>
+<td class="td-manage x-admin-sm">
+  <%= link_to_icon "修改", edit_admin_luggage_path(luggage), class: "layui-btn layui-btn-xs", remote: true%>
+  <%= link_to_icon "查看", admin_luggage_path(luggage), class: "layui-btn layui-btn-normal layui-btn-xs", remote: true %>
+  <%= link_to_icon "结账", pay_admin_luggage_path(luggage), class: "layui-btn layui-btn-warm layui-btn-xs", remote: true%>
+  <%= link_to_icon "查看金额", admin_luggage_path(luggage), class: "layui-btn layui-btn-xs", remote: true %>
+</td>

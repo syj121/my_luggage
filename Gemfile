@@ -74,5 +74,7 @@ gem 'pry-rails', '0.3.2'
 gem "carrierwave"
 #树形结构
 gem "ancestry"
-#
+#验证码
 gem 'simple_captcha2', require: 'simple_captcha'
+#jquery_ujs
+gem 'jquery-rails'

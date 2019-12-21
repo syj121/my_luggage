@@ -1,0 +1,31 @@
+<%= render "search"%>
+
+<div class="layui-card-header">
+  <%= link_to_icon "新增", new_admin_luggage_path(back: request.fullpath), class: "layui-btn", remote: true%>
+</div>
+
+<div class="layui-card-body layui-table-body layui-table-main">
+  <table class="layui-table layui-form">
+    <thead>
+      <tr>
+        <th>货物托管编号</th>
+        <th>姓名</th>
+        <th>类型</th>
+        <th>保管开始时间</th>
+        <th>件数</th>
+        <th>结账状态</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @luggages.each do |luggage|%>
+        <tr id="luggage_<%= luggage.id%>">
+          <%= render "index_td", luggage: luggage%>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<%= paginate @luggages%>

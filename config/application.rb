@@ -18,5 +18,8 @@ module MyLuggage
     config.i18n.locale = 'zh-CN'
     config.i18n.default_locale = 'zh-CN'
     config.encoding = "utf-8"
+
+    config.time_zone = 'Beijing'
+    config.active_record.default_timezone = :local
   end
 end

@@ -1,0 +1,56 @@
+<div class="layui-col-md12">
+  <div class="layui-card">
+    <div class="layui-card-header"></div>
+    <div class="layui-card-body ">
+      <table class="layui-table">
+        <tbody>
+          <tr>
+            <th>货物托运单号</th>
+            <td><%= @luggage.no%></td>
+          </tr>
+
+          <tr>
+            <th>件数</th>
+            <td><%= @luggage.items_count%></td>
+          </tr>
+
+          <tr>
+            <th>姓名</th>
+            <td><%= @luggage.user_name%></td>
+          </tr>
+
+          <tr>
+            <th>有效证件号码</th>
+            <td><%= @luggage.card_no%></td>
+          </tr>
+
+          <tr>
+            <th>手机号码</th>
+            <td><%= @luggage.mobile%></td>
+          </tr>
+
+          <tr>
+            <th>存时</th>
+            <td><%= @luggage.store_at%></td>
+          </tr>
+
+          <tr>
+            <th>取时</th>
+            <td><%= @luggage.pick_at%></td>
+          </tr>
+
+          <tr>
+            <th>保管费应收</th>
+            <td><%= @luggage.total_charge%></td>
+          </tr>
+
+          <tr>
+            <th>备注</th>
+            <td><%= @luggage.remark%></td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+</div>

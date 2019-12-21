@@ -6,3 +6,10 @@ zh-CN:
     failure:
       user:
         unauthenticated: "请先登录"
+  views:
+    pagination:
+      first: "首页"
+      last: "末页"
+      previous: "&lsaquo; 上一页"
+      next: "下一页 &rsaquo;"
+      truncate: "&hellip;"

@@ -1,0 +1,5 @@
+<% if @luggage.new_record? %>
+  layer_tip("新增失败", "失败原因如下：<%= @luggage.errors.messages%>");
+<% else %>
+  parent.location.href = "<%= admin_luggages_path%>";
+<% end %>

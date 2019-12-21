@@ -14,8 +14,12 @@
 //= require activestorage
 //= require turbolinks
 
-//= require xadmin/layui/layui
 //= require jquery
+//= require jquery_ujs
+
+//= require xadmin/layui/layui
 //= require xadmin/xadmin
+
+//= require common
 
 // require_tree .

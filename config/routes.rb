@@ -11,6 +11,12 @@ Rails.application.routes.draw do
     get "/" => "admin#index"
     get "/home" => "home#index"
 
+    resources :luggages do 
+      member do 
+        get :pay
+      end
+    end
+
   end
 
 end
