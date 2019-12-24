@@ -4,7 +4,6 @@ module Admin
     def index
       @q = Luggage.ransack(params[:q])
       @luggages = @q.result.page(params[:page])
-      #binding.pry
     end
 
     def new
@@ -12,7 +11,12 @@ module Admin
     end
 
     def create
-      @luggage = Luggage.create(luggage_params)
+      #@luggage = Luggage.create(luggage_params)
+      #render json: {success: false, msg: "操作失败"}
+      respond_to do |format| 
+        @back_json = {"success" => false, "msg" => "操作失败"}
+        format.js 
+      end
     end
 
     def edit

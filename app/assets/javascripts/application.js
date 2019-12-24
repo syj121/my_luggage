@@ -14,11 +14,13 @@
 //= require activestorage
 //= require turbolinks
 
-//= require jquery
-//= require jquery_ujs
+//= require jquery2
 
 //= require xadmin/layui/layui
 //= require xadmin/xadmin
+
+//= require validationEngine
+//= require validationEngine.zh-CN
 
 //= require common
 

@@ -1,89 +1,15 @@
 <div class="layui-fluid">
   <div class="layui-row">
-    <%= simple_form_for [:admin, @luggage], class: "layui-form", remote: true do |f|%>
-      <div class="layui-form-item">
-        <label for="L_email" class="layui-form-label">
-            <span class="x-red">*</span>货物托运单号：
-        </label>
-        <div class="layui-input-inline">
-          <%= f.text_field :no, readonly: true, class: "layui-input"%>
-        </div>
-        <div class="layui-form-mid layui-word-aux">
-          <span class="x-red">*</span>货物托运单号为系统自动生成
-        </div>
-      </div>
+    <%= simple_form_for [:admin, @luggage], remote: true do |f|%>
 
-      <div class="layui-form-item">
-        <label for="L_username" class="layui-form-label">
-          <span class="x-red">*</span>存时
-        </label>
-        <div class="layui-input-inline">
-          <%= f.text_field :store_at, readonly: true,  class: "layui-input"%>
-        </div>
-      </div>
-
-      <div class="layui-form-item">
-        <label for="L_username" class="layui-form-label">
-          <span class="x-red">*</span>姓名
-        </label>
-        <div class="layui-input-inline">
-          <%= f.text_field :user_name, class: "layui-input"%>
-        </div>
-      </div>
-
-      <div class="layui-form-item">
-        <label for="L_username" class="layui-form-label">
-          <span class="x-red">*</span>证件类型
-        </label>
-        <div class="layui-input-inline">
-          <%= f.select :card_type, Luggage::CARD_TYPE.invert, class: "layui-input"%>
-        </div>
-      </div>
-
-      <div class="layui-form-item">
-        <label for="L_username" class="layui-form-label">
-          <span class="x-red">*</span>证件号码
-        </label>
-        <div class="layui-input-inline">
-          <%= f.text_field :card_no, class: "layui-input"%>
-        </div>
-      </div>
-
-      <div class="layui-form-item">
-        <label for="L_username" class="layui-form-label">
-          <span class="x-red">*</span>手机号码
-        </label>
-        <div class="layui-input-inline">
-          <%= f.text_field :mobile, class: "layui-input"%>
-        </div>
-      </div>
-
-      <div class="layui-form-item">
-        <label for="L_username" class="layui-form-label">
-          <span class="x-red">*</span>件数
-        </label>
-        <div class="layui-input-inline">
-          <%= f.number_field :items_count, class: "layui-input"%>
-        </div>
-      </div>
-
-      <div class="layui-form-item">
-        <label for="L_username" class="layui-form-label">
-          <span class="x-red">*</span>备注
-        </label>
-        <div class="layui-input-inline">
-          <%= f.text_area :remark, class: "layui-input"%>
-        </div>
-      </div>
-
-      <div class="layui-form-item layui-form-text">
-        <label for="desc" class="layui-form-label">
-            备注
-        </label>
-        <div class="layui-input-block">
-          <%= f.text_area :remark, class: "layui-textarea"%>
-        </div>
-      </div>
+      <%= f.input :no, label: "货物托运单号", hint: "货物托运单号为系统自动生成", readonly: true%>
+      <%= f.input :store_at, as: :string, label: "存时", readonly: true%>
+      <%= f.input :user_name, label: "姓名", required: true, input_html: {class: "validate[required]"}%>
+      <%= f.input :card_type, collection: Luggage::CARD_TYPE.to_a, label: "证件类型"%>
+      <%= f.input :card_no, label: "证件号码"%>
+      <%= f.input :mobile, label: "手机号码"%>
+      <%= f.input :items_count, label: "件数", input_html: {min: 1}%>
+      <%= f.input :remark, label: "备注", input_html: {class: "layui-textarea"}%>
 
       <%= render "admin/a_shared/btn_form", f: f%>
     <% end %>

@@ -33,7 +33,7 @@
 
   <ul class="layui-nav right" lay-filter="">
     <li class="layui-nav-item">
-      <a href="javascript:;"><%= current_user.try(:login_name) || "匿名"%></a>
+      <a href="javascript:;"><%= current_user.login_name || "匿名"%></a>
       <dl class="layui-nav-child">
           <!-- 二级菜单 -->
           <dd>
@@ -48,7 +48,7 @@
             </dd>
           <% else %>
             <dd>
-              <%= link_to "登出", destroy_user_session_path(current_user), method: :delete%>
+              <%= link_to "登出", destroy_user_session_path, method: :delete%>
             </dd>
           <% end %>
       </dl>

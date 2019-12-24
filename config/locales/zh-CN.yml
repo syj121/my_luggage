@@ -6,6 +6,9 @@ zh-CN:
     failure:
       user:
         unauthenticated: "请先登录"
+    sessions:
+      user:
+        signed_in: "登录成功"
   views:
     pagination:
       first: "首页"

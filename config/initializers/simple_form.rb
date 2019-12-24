@@ -13,8 +13,9 @@ SimpleForm.setup do |config|
   # wrapper, change the order or even add your own to the
   # stack. The options given below are used to wrap the
   # whole input.
-  config.wrappers :default, class: :input,
-    hint_class: :field_with_hint, error_class: :field_with_errors, valid_class: :field_without_errors do |b|
+  config.wrappers tag: :div, class: :input,
+                  error_class: :field_with_errors,
+                  valid_class: :field_without_errors do |b|
     ## Extensions enabled by default
     # Any of these extensions can be disabled for a
     # given input by passing: `f.input EXTENSION_NAME => false`.
@@ -53,15 +54,21 @@ SimpleForm.setup do |config|
 
     ## Inputs
     # b.use :input, class: 'input', error_class: 'is-invalid', valid_class: 'is-valid'
-    b.use :label_input
-    b.use :hint,  wrap_with: { tag: :span, class: :hint }
-    b.use :error, wrap_with: { tag: :span, class: :error }
+    #b.use :label_input
+    #b.use :hint,  wrap_with: { tag: :span, class: :hint }
+    #b.use :error, wrap_with: { tag: :span, class: :error }
 
     ## full_messages_for
     # If you want to display the full error message for the attribute, you can
     # use the component :full_error, like:
     #
     # b.use :full_error, wrap_with: { tag: :span, class: :error }
+    
+    b.wrapper tag: :div, class: "layui-form-item" do |component|
+      component.use :label, class: "layui-form-label"
+      component.use :input, class: "layui-input", error_class: 'x-red', wrap_with: {tag: :div, class: "layui-input-inline"}
+      component.use :hint,  wrap_with: { tag: :div, class: "layui-form-mid layui-word-aux" }
+    end
   end
 
   # The default wrapper to be used by the FormBuilder.
@@ -74,7 +81,7 @@ SimpleForm.setup do |config|
   config.boolean_style = :nested
 
   # Default class for buttons
-  config.button_class = 'btn'
+  config.button_class = 'layui-btn'
 
   # Method used to tidy up errors. Specify any Rails Array method.
   # :first lists the first message for each field.
@@ -107,14 +114,14 @@ SimpleForm.setup do |config|
   # config.item_wrapper_class = nil
 
   # How the label text should be generated altogether with the required text.
-  # config.label_text = lambda { |label, required, explicit_label| "#{required} #{label}" }
+  config.label_text = lambda { |label, required, explicit_label| "<span class='x-red'>*</span> #{label}" }
 
   # You can define the class to use on all labels. Default is nil.
   # config.label_class = nil
 
   # You can define the default class to be used on forms. Can be overriden
   # with `html: { :class }`. Defaulting to none.
-  # config.default_form_class = nil
+  config.default_form_class = "layui-form valid_engine"
 
   # You can define which elements should obtain additional classes
   # config.generate_additional_classes_for = [:wrapper, :label, :input]

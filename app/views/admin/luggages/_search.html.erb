@@ -1,15 +1,15 @@
 <div class="layui-card-body ">
-  <%= form_for @q, url: admin_luggages_path, class: "layui-form layui-col-space5", method: :get do |f|%>
+  <%= search_form_for @q, url: admin_luggages_path, class: "layui-form layui-col-space5", method: :get do |f|%>
     <div class="layui-inline layui-show-xs-block">
-      <%= f.text_field :no_cont, placeholder: "货物托管编号", class: "layui-input" %>
+      <%= f.search_field :no_cont, placeholder: "货物托管编号", class: "layui-input" %>
     </div>
 
     <div class="layui-inline layui-show-xs-block">
-      <%= f.text_field :user_name_cont, placeholder: "姓名", class: "layui-input" %>
+      <%= f.search_field :user_name_cont, placeholder: "姓名", class: "layui-input" %>
     </div>
 
     <div class="layui-inline layui-show-xs-block">
-      <%= f.text_field :store_at_gteq, placeholder: "保管开始时间", class: "layui-input laydate_time" %>
+      <%= f.search_field :store_at_gteq, placeholder: "保管开始时间", class: "layui-input laydate_time" %>
     </div>
 
     <%= render "admin/a_shared/btn_search", f: f%>

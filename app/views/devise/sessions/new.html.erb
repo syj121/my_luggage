@@ -4,7 +4,7 @@
     <div id="darkbannerwrap"></div>
     
     <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name), html: {class: "layui-form"}) do |f| %>
-      <%= alert %>
+      <span class="x-red"><%= alert %></span>
       <hr class="hr15">
       
       <%= f.text_field :login_name, autofocus: true, id: "doc-ipt-email-1", placeholder: "账号", "lay-verify": "required", class: "layui-input" %>
@@ -25,24 +25,5 @@
       <%#= link_to "注册",  new_registration_path(resource_name)%>
     <% end %>
   </div>
-
-  <script>
-    $(function  () {
-      layui.use('form', function(){
-        var form = layui.form;
-        // layer.msg('玩命卖萌中', function(){
-        //   //关闭后的操作
-        //   });
-        //监听提交
-        form.on('submit(login)', function(data){
-          // alert(888)
-          layer.msg(JSON.stringify(data.field),function(){
-              location.href='index.html'
-          });
-          return false;
-        });
-      });
-    })
-  </script>
   <!-- 底部结束 -->
 </div>
