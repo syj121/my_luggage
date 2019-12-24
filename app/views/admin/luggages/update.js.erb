@@ -1,6 +1,0 @@
-<% if @luggage.errors.messages.present? %>
-  layer_tip("修改失败", "失败原因如下：<%= @luggage.errors.messages%>");
-<% else %>
-  parent.$("#luggage_<%= @luggage.id%>").html("<%= j(render 'index_td', luggage: @luggage)%>")
-  layer_tip("修改成功", "货运单【<%= @luggage.no %>】已更新", {"close": "iframe", "time": 1000});
-<% end %>
