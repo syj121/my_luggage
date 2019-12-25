@@ -11,12 +11,9 @@ module Admin
     end
 
     def create
-      #@luggage = Luggage.create(luggage_params)
-      #render json: {success: false, msg: "操作失败"}
-      respond_to do |format| 
-        @back_json = {"success" => false, "msg" => "操作失败"}
-        format.js 
-      end
+      @luggage = Luggage.new(luggage_params)
+      @luggage.save ? flash_msg(:success, "托运【#{@luggage.no}】更新成功") : flash_msg(:error, @luggage.errors.messages)
+      redirect_to_back 
     end
 
     def edit
@@ -24,12 +21,13 @@ module Admin
 
     def update
       @luggage.assign_attributes(luggage_params)
-      @luggage.save
+      @luggage.save ? flash_msg(:success, "托运【#{@luggage.no}】更新成功") : flash_msg(:error, @luggage.errors.messages)
+      redirect_to_back
     end
 
     private
     def luggage_params
-      params.require(:luggage).permit(:user_name,:card_type, :card_no, :total_charge, :remark,:store_at, :mobile)
+      params.require(:luggage).permit(:user_name,:card_type, :card_no, :total_charge, :remark,:store_at, :mobile, :store_at, :no)
     end
 
   end

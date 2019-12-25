@@ -78,3 +78,7 @@ gem "ancestry"
 gem 'simple_captcha2', require: 'simple_captcha'
 #jquery_ujs
 gem 'jquery-rails'
+#默认值
+gem "default_value_for"
+#工作流
+gem 'workflow'

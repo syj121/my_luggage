@@ -6,6 +6,19 @@ module Admin
 
     layout "admin"
 
+    #成功则跳转params[:back],失败则返回原来页面
+    def redirect_to_back
+      if flash_msg(:success)
+        redirect_to params[:back]
+      else
+        redirect_back(fallback_location: root_path)
+      end
+    end
+
+    def flash_msg(status = :notice, msg = "")
+      flash[status] = msg
+    end
+
     private
     def load_resource
       class_name = controller_name.singularize.classify

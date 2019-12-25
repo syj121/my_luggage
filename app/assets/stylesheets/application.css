@@ -15,4 +15,6 @@
  *
  *= require_tree ./xadmin
  *= require validationEngine
+ *
+ *= require admin
  */
