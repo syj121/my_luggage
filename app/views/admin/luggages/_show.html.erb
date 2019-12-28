@@ -1,52 +1,49 @@
 <div class="layui-col-md12">
   <div class="layui-card">
-    <div class="layui-card-header"></div>
+    <div class="layui-card-header">
+      <table class="layui-table th-tcr">
+        <tr>
+          <th>证件号码：</th>
+          <td><%= @luggage.card_no%></td>
+
+          <th>姓名</th>
+          <td><%= @luggage.user_name%></td>
+
+          <th>货物托运单号</th>
+          <td><%= @luggage.no%></td>
+        </tr>
+      </table>
+    </div>
+
     <div class="layui-card-body ">
-      <table class="layui-table">
+      <table class="layui-table th-tcr table-no-border">
         <tbody>
+
           <tr>
             <th>货物托运单号</th>
             <td><%= @luggage.no%></td>
-          </tr>
 
-          <tr>
-            <th>件数</th>
-            <td><%= @luggage.items_count%></td>
-          </tr>
+            <th>保管日期</th>
+            <td><%= @luggage.store_at%></td>
 
-          <tr>
-            <th>姓名</th>
-            <td><%= @luggage.user_name%></td>
-          </tr>
-
-          <tr>
-            <th>有效证件号码</th>
-            <td><%= @luggage.card_no%></td>
+            <th>公司名称</th>
+            <td>公交信禾长云股份公司（拱北通道汽车站）</td>
           </tr>
 
           <tr>
             <th>手机号码</th>
             <td><%= @luggage.mobile%></td>
-          </tr>
 
-          <tr>
-            <th>存时</th>
-            <td><%= @luggage.store_at%></td>
-          </tr>
+            <th>件数</th>
+            <td><%= @luggage.items_count%></td>
 
-          <tr>
-            <th>取时</th>
-            <td><%= @luggage.pick_at%></td>
-          </tr>
-
-          <tr>
-            <th>保管费应收</th>
-            <td><%= @luggage.total_charge%></td>
+            <th></th>
+            <td></td>
           </tr>
 
           <tr>
             <th>备注</th>
-            <td><%= @luggage.remark%></td>
+            <td colspan="5"><%= @luggage.remark%></td>
           </tr>
         </tbody>
       </table>

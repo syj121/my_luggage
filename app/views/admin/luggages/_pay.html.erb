@@ -1,0 +1,60 @@
+<div class="layui-col-md12">
+  <div class="layui-card">
+    <div class="layui-card-header">
+      <h1><%= title %></h1>
+    </div>
+
+    <div class="layui-card-body ">
+      <table class="layui-table th-tcr table-no-border">
+        <tbody>
+
+          <tr>
+            <th>货物托运单号</th>
+            <td><%= @luggage.no%></td>
+
+            <th>件数</th>
+            <td><%= @luggage.items_count%></td>
+          </tr>
+
+          <tr>
+            <th>姓名</th>
+            <td><%= @luggage.user_name%></td>
+            <th>证件号码：</th>
+            <td><%= @luggage.card_no%></td>
+          </tr>
+
+          <tr>
+            <th>手机号码</th>
+            <td colspan="3"><%= @luggage.mobile%></td>
+          </tr>
+
+          <tr>
+            <th>存时</th>
+            <td colspan="3"><%= @luggage.store_at%></td>
+          </tr>
+
+          <tr>
+            <th>取时</th>
+            <td colspan="3">
+              <%= @luggage.pick_at %>
+              <%= tip_msg("此处时间为扫机枪的时间")%>
+            </td>
+          </tr>
+
+          <tr>
+            <th>保管收费</th>
+            <td colspan="3" class="red"><%= number_to_currency @luggage.total_charge %></td>
+          </tr>
+
+          <tr>
+            <th>备注</th>
+            <td colspan="5"><%= @luggage.remark%></td>
+          </tr>
+
+          <%= yield(:submit)%>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+</div>

@@ -1,6 +1,8 @@
 module Admin
   class LuggagesController < Admin::HomeController
 
+    before_action :check_auth
+
     def index
       @q = Luggage.ransack(params[:q])
       @luggages = @q.result.page(params[:page])
@@ -25,9 +27,38 @@ module Admin
       redirect_to_back
     end
 
+    def pay
+      return redirect_to_back unless @luggage.can_pay?
+      @luggage.pay_charge
+    end
+
+    def save_charge
+      @luggage.update(pay_status: 2)
+      flash_msg(:success, "已收费")
+      redirect_to_back
+    end
+
     private
     def luggage_params
-      params.require(:luggage).permit(:user_name,:card_type, :card_no, :total_charge, :remark,:store_at, :mobile, :store_at, :no)
+      params.require(:luggage).permit(:user_name,:card_type, :card_no, :remark,:store_at, :mobile, :store_at, :no, :items_count)
+    end
+
+    def luggage_charge_params
+      params.require(:luggage).permit(:pick_at, :total_charge)
+    end
+
+    #检查变更权限
+    def check_auth
+      return true if @luggage.blank?
+      c = case action_name
+      when "edit","update"
+        @luggage.can_edit?
+      when "pay","save_charge"
+        @luggage.can_pay?
+      else
+        true
+      end
+      return redirect_to_back unless c
     end
 
   end

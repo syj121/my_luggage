@@ -12,6 +12,13 @@
       <%= f.search_field :store_at_gteq, placeholder: "保管开始时间", class: "layui-input laydate_time" %>
     </div>
 
+    <div class="layui-inline layui-show-xs-block">
+      <%= f.label "未结账"%>
+      <%= f.radio_button :pay_status_eq, 1%>
+      <%= f.label "已结账"%>
+      <%= f.radio_button :pay_status_eq, 2%>
+    </div>
+
     <%= render "admin/a_shared/btn_search", f: f%>
   <% end %>
 </div>

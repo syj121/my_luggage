@@ -45,7 +45,7 @@ module LinkHelper
       destroy: {icon: "&#xe640;", class: "layui-btn layui-btn-danger layui-btn-lg"},
       pay: {icon: "&#xe702;", class: "layui-btn layui-btn-danger layui-btn-lg" }
     }
-    icons.default = {show: {icon: "&#xe6a4;", class: "layui-btn layui-btn-normal layui-btn-lg"}}
+    icons.default = {icon: "&#xe6a4;", class: "layui-btn layui-btn-normal layui-btn-lg"}
 
     #参数解析
     name = args[0]

@@ -1,0 +1,10 @@
+<%= content_for :submit do %>
+  <tr>
+    <td colspan="6" class="tc">
+      <%= link_to "确认收费", save_charge_admin_luggage_path(@luggage, back: request.fullpath), class: "layui-btn layui-btn-normal", data: {confirm: "确认收费吗？"}%>
+      <%= link_to "取消收费", params[:back], class: "layui-btn"%>
+    </td>
+  </tr>
+<% end %>
+
+<%= render "pay", title: "寄存收费"%>

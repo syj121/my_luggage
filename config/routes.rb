@@ -13,6 +13,8 @@ Rails.application.routes.draw do
     resources :luggages do 
       member do 
         get :pay
+        get :save_charge
+        get :show_charge
       end
     end
 

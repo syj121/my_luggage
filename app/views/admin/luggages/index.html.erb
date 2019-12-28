@@ -21,7 +21,18 @@
     <tbody>
       <% @luggages.each do |luggage|%>
         <tr id="luggage_<%= luggage.id%>">
-          <%= render "index_td", luggage: luggage%>
+          <td><%= luggage.no %></td>
+          <td><%= luggage.user_name%></td>
+          <td><%= Luggage::CARD_TYPE[luggage.card_type]%></td>
+          <td><%= luggage.store_at.to_s %></td>
+          <td><%= luggage.items_count%></td>
+          <td><%= Luggage::PAY_STATUS[luggage.pay_status]%></td>
+          <td class="td-manage x-admin-sm">
+            <%= link_to_icon "修改", edit_admin_luggage_path(luggage) if luggage.can_edit? %>
+            <%= link_to_icon "查看", admin_luggage_path(luggage), remote: true if luggage.can_show? %>
+            <%= link_to_icon "结账", pay_admin_luggage_path(luggage) if luggage.can_pay? %>
+            <%= link_to_icon "查看金额", show_charge_admin_luggage_path(luggage), remote: true if luggage.can_show_charge? %>
+          </td>
         </tr>
       <% end %>
     </tbody>

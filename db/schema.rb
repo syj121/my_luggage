@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_21_061016) do
+ActiveRecord::Schema.define(version: 2019_12_26_062945) do
 
   create_table "luggage_items", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.bigint "luggage_id", comment: "托运ID"
@@ -24,7 +24,7 @@ ActiveRecord::Schema.define(version: 2019_12_21_061016) do
     t.string "no", null: false, comment: "托运单号 201912210001"
     t.integer "consignor_id", comment: "托运人"
     t.integer "items_count", default: 0, comment: "存件数"
-    t.string "workflow_status", comment: "状态"
+    t.string "workflow_status"
     t.integer "pay_status", default: 1, comment: "结账状态"
     t.string "user_name", null: false, comment: "用户名"
     t.string "mobile", comment: "手机号"
@@ -36,6 +36,8 @@ ActiveRecord::Schema.define(version: 2019_12_21_061016) do
     t.text "remark", comment: "备注"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "index_day", comment: "日期 天"
+    t.index ["index_day"], name: "index_luggages_on_index_day"
     t.index ["no"], name: "index_luggages_on_no", unique: true
     t.index ["pay_status"], name: "index_luggages_on_pay_status"
     t.index ["user_name"], name: "index_luggages_on_user_name"
