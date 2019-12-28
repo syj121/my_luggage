@@ -16,6 +16,7 @@
  *= require xadmin/font
  *= require xadmin/xadmin
  *= require validationEngine
+ *= require common
  
  */
 
@@ -33,4 +34,19 @@ table.th-tcr td {
 
 table td.tc {
   text-align: center;
+}
+
+table.layui-table-show {
+  width: 100%;
+}
+
+table.layui-table-show th {
+  text-align: right;
+  width: 15%;
+  padding: 5px 0px;
+}
+
+table.layui-table-show td {
+  text-align: left;
+  padding: 5px 0px;
 }

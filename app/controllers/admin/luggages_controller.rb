@@ -38,6 +38,10 @@ module Admin
       redirect_to_back
     end
 
+    def print
+      render layout: "admin_print"
+    end
+
     private
     def luggage_params
       params.require(:luggage).permit(:user_name,:card_type, :card_no, :remark,:store_at, :mobile, :store_at, :no, :items_count)

@@ -1,0 +1,90 @@
+<div id="print-page">
+  <div class="layui-card-body">
+    <fieldset class="layui-elem-field">
+      <legend class="green"><%= @luggage.no %></legend>
+      <div class="layui-field-box">
+        <table class="layui-table-show">
+          <tr>
+            <th>姓名：</th>
+            <td><%= @luggage.user_name%></td>
+          </tr>
+
+          <tr>
+            <th>电话：</th>
+            <td><%= @luggage.mobile%></td>
+          </tr>
+
+          <tr>
+            <th>证件号码：</th>
+            <td><%= @luggage.no %></td>
+          </tr>
+
+          <tr>
+            <th>保管开始时间：</th>
+            <td><%= @luggage.store_at%></td>
+          </tr>
+
+          <tr>
+            <th>件数：</th>
+            <td><%= @luggage.items_count%></td>
+          </tr>
+
+          <tr>
+            <th>公司名称：</th>
+            <td><%= $settings[:company_name]%></td>
+          </tr>
+        </table>
+      </div>
+    </fieldset>
+  </div>
+
+
+  <div class="layui-card-body">
+    <fieldset class="layui-elem-field">
+      <legend class="green"><%= @luggage.no %></legend>
+      <div class="layui-field-box">
+        <table class="layui-table-show">
+          <tr>
+            <th>姓名：</th>
+            <td colspan="5"><%= @luggage.user_name%></td>
+          </tr>
+
+          <tr>
+            <th>电话：</th>
+            <td colspan="5"><%= @luggage.mobile%></td>
+          </tr>
+
+          <tr>
+            <th>取件日期：</th>
+            <td colspan="5"><%= @luggage.pick_at %></td>
+          </tr>
+
+          <tr>
+            <th>收费标准：</th>
+            <td colspan="5">xxxxx</td>
+          </tr>
+
+          <tr>
+            <th>服务时间：</th>
+            <td colspan="5">7：30 — 20：30</td>
+          </tr>
+
+          <tr>
+            <th>公司名称：</th>
+            <td colspan="5"><%= $settings[:company_name]%></td>
+          </tr>
+
+          <tr>
+            <th>监督电话：</th>
+            <td>0756-8886733</td>
+            <th>服务热线：</th>
+            <td>0756-8150128</td>
+            <th>客户签字：</th>
+            <td></td>
+          </tr>
+        </table>
+      </div>
+    </fieldset>
+  </div>
+</div>
+

@@ -1,0 +1,16 @@
+/* 最小高度 */
+@for $i from 0 through 1000{
+  .minh-#{$i} {min-height: #{$i}px; }
+  .h-#{$i} {height: #{$i}px; }
+  .mt-#{$i} {margin-top: #{$i}px; }
+  .ml-#{$i} {margin-left: #{$i}px; }
+  .mr-#{$i} {margin-right: #{$i}px; }
+  .mb-#{$i} {margin-bottom: #{$i}px; }
+}
+
+.green {color: green;}
+.textc {text-align: center;}
+
+@media print{
+  .noprint{display:none;}
+}

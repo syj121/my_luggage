@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= $settings[:site_name] %></title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  </head>
+
+  <body>
+
+    <div class="layui-fluid">
+      <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+          <div class="layui-card">
+            <%= yield %>
+
+            <div class="layui-card-body textc noprint">
+              <button  onclick="window.print();" class="layui-btn layui-btn-normal" > 打 印 </button>
+              <button  onclick="window.close();" class="layui-btn" > 关 闭 </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div> 
+    
+  </body>
+</html>

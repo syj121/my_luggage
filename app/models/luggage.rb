@@ -83,4 +83,8 @@ class Luggage < ApplicationRecord
     self.pay_status > 1
   end
 
+  def can_print?
+    self.pay_status >= 2
+  end
+
 end
