@@ -5,7 +5,7 @@
       <%= hidden_field_tag :back, params[:back]%>
 
       <%= f.input :no, label: "货物托运单号", hint: "货物托运单号为系统自动生成", readonly: true%>
-      <%= f.input :store_at, as: :string, label: "存时", readonly: true, hint: "系统自动生成当前时间"%>
+      <%= f.input :store_at, as: :string, label: "存时", readonly: true, hint: "#{'系统自动生成当前时间' if @luggage.new_record? }"%>
       <%= f.input :user_name, label: "姓名", required: true, input_html: {class: "validate[required]"}%>
       <%= f.input :card_type, collection: Luggage::CARD_TYPE.invert, label: "证件类型"%>
       <%= f.input :card_no, label: "证件号码"%>
