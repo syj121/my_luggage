@@ -1,6 +1,6 @@
 <div class="layui-fluid">
   <div class="layui-row">
-    <%= simple_form_for [:admin, @luggage], remote: true do |f|%>
+    <%= simple_form_for [:admin, @luggage] do |f|%>
 
       <%= hidden_field_tag :back, params[:back]%>
 
