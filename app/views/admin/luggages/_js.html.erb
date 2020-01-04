@@ -1,0 +1,492 @@
+<script type="text/javascript">
+  var websocket = null;
+  var timerId = null;
+  var bigImageEmpty = true;
+  var bCardDetectedNotification = false; /* 检测到证件放入或拿出时,是否会发送通知; 当启用回调模式时, 此变量也会设置为true */
+  
+  var bConnected = false;
+  
+  var strTltle;
+  var strConnect = "建立连接";
+  var strDisconnect = "断开连接";
+  var strDeviceStatus = "设备状态";
+  var strDeviceConnected = "设备已连接";
+  var strDeviceName = "设备名称"
+  var strDeviceSerialno = "设备序列号";
+  var strDevNotConnect = "设备未连接";
+  var strDescOfWebsocketError = "websocket连接出错,请确认WebSocket服务正常运行，并重新建立连接";
+  var strDescFailSetRFID = "设置是否读取芯片信息出错";
+  var strDescFailSetVIZ = "设置是否识别版面信息出错";
+  var strPlaceHolderCardTextInfo = "此处显示从证件读取的文本信息";
+  var strDescFailSendWebsocket = "向后台服务发送指令出错";
+  var strDeviceOffLine = "设备掉线";
+  var strDeviceReconnected = "设备已重新连接";
+  var strWebDescDeviceNotFound = "WebSocket已连接, 未检测到设备";
+  var strWebDescRequireRestartSvc = "WebSocket服务需要重新启动";
+  var strWebDescAskForSupport = "WebSocket服务遇到问题, 请联系管理员";
+  var strWebDescRequireReconnect = "WebSocket服务要求web端重新建立连接";
+  
+  window.onload = function() {
+    document.getElementById("connection").value = strConnect;
+  }
+  
+  /* 关闭页面前，先关闭websocket连接 */
+  window.onbeforeunload = function(event) {
+    if (websocket !== null) {
+      websocket.close();
+      websocket = null;
+    }
+  }
+  
+  function setConnBtnValue() {
+    if (bConnected) {
+      document.getElementById("connection").value = strDisconnect;
+    } else {
+      document.getElementById("connection").value = strConnect;
+    }
+  }
+  
+  /* 建立WebSocket连接并初始化websocket属性 */
+  function connect() {
+    try {
+      var host = "ws://127.0.0.1:90/echo";
+      if (websocket != null) {
+        websocket.close();
+      }
+      
+      websocket = new WebSocket(host);
+      
+      /* 成功建立websocket连接 */
+      websocket.onopen = function() {
+        bConnected = true;
+        setConnBtnValue();
+        
+        getWebConstants();
+        
+        setDefaultSettings();
+        timerId = setInterval(getDeviceStatus(), 1000);
+      }
+      
+      /* 响应后台服务的应答报文或通知报文 */
+      websocket.onmessage = function(event) {
+        var retmsg = event.data;
+        var jsonMsg;
+        console.log(retmsg);
+        try {
+          jsonMsg = JSON.parse(retmsg);
+          if (jsonMsg.Type == 'Reply') {
+            if (jsonMsg.hasOwnProperty('Commands')) {
+              for (var index in jsonMsg.Commands) {
+                processReply(jsonMsg.Commands[index]);
+              }
+            } else {
+              processReply(jsonMsg);
+            }
+          } else if (jsonMsg.Type == 'Notify') {
+            processNotify(jsonMsg);
+          }
+          return;
+        } catch (exception) {
+          // document.getElementById("msg").innerHTML = "Parse error: " + event.data;
+        }
+      }
+      
+      /* 主动或被动关闭websocket连接时触发，清空页面信息 */
+      websocket.onclose = function() {
+        bConnected = false;
+        setConnBtnValue();
+        // document.getElementById('connection').value = strConnect; // "建立连接";
+        clrDeviceStatus();
+        clrTextInfo();
+        clrImages(true);
+        // websocket = null;
+        
+        if (websocket !== null) {
+          if (websocket.readyState == 3) {
+            document.getElementById('deviceStatus').innerHTML = strDescOfWebsocketError;
+            document.getElementById('deviceStatus').style.color = '#f00';
+          }
+          
+          websocket.close();
+          websocket = null;
+        }
+      }
+      
+      /* websocket出错事件，清空页面信息并报警 */
+      websocket.onerror = function(evt) {
+        bConnected = false;
+        setConnBtnValue();
+        // document.getElementById('connection').value = strConnect; // "建立连接";
+        clrDeviceStatus();
+        clrTextInfo();
+        clrImages(true);
+      }
+      
+    } catch (exception) {
+      // document.getElementById("msg").innerHTML = "WebSocket  error";
+    }
+  }
+  
+  /* 页面点击建立连接按钮时触发此函数 */
+  function onConnection() {
+    if (document.getElementById("connection").value == strConnect /*'建立连接'*/) {
+      if (websocket !== null) {
+        websocket.close();
+        websocket = null;
+      }
+      
+      connect();
+    } else {
+      if (websocket !== null) {
+        websocket.close();
+        websocket = null;
+      }
+    }
+  }
+  
+  /* 页面点击断开连接按钮是触发此函数 */
+  function disConnect() {
+    if (websocket != null) {
+      websocket.close();
+      websocket = null;
+    }
+  }
+  
+  /* 页面向后台发送指令，后台返回应答 */
+  function processReply(msgReply) {
+    if (msgReply.Command == 'Get') {
+      if (msgReply.Succeeded == 'Y') { /* Get指令成功执行，从应答报文中解析出对应的结果 */
+        if (msgReply.Operand == 'DeviceName') { /* 应答报文中的设备名称 */
+          document.getElementById('deviceName').innerHTML = /* strDeviceName + ":" + */ msgReply.Result;
+        } else if (msgReply.Operand == 'DeviceSerialNo') { /* 应答报文中的设备序列号 */
+          document.getElementById('deviceSerial').innerHTML = /* strDeviceSerialno + ":" + */ msgReply.Result;
+        } else if (msgReply.Operand == 'OnLineStatus') { /* 应答报文中的设备在线状态 */
+          document.getElementById('deviceStatus').innerHTML = /* strDeviceStatus + ":" + */ msgReply.Result;
+          if (msgReply.Result == strDeviceConnected) {
+            document.getElementById('deviceStatus').style.color = '#000';
+            document.getElementById('deviceNameKey').style.display = 'inline';
+            document.getElementById('deviceSerialKey').style.display = 'inline';
+          }
+        }else if(msgReply.Operand=='VersionInfo'){
+          document.title = strTitle + "V" + msgReply.Result;
+          document.getElementsByTagName("h1")[0].innerText = strTitle + "V" + msgReply.Result;
+        }else if (msgReply.Operand == 'WebConstant') {
+          if (msgReply.Param == 'CardRecogSystem') {
+            strTitle = msgReply.Result;
+          } else if (msgReply.Param == 'Connect') {
+            strConnect = msgReply.Result;
+            setConnBtnValue();
+            // document.getElementById("connection").value = msgReply.Result;
+          } else if (msgReply.Param == 'Disconnect') {
+            strDisconnect = msgReply.Result;
+            setConnBtnValue();
+            // document.getElementById("connection").value = msgReply.Result;
+          } else if (msgReply.Param == 'Save') {
+            document.getElementById("btnSaveSettings").value = msgReply.Result;
+          } else if (msgReply.Param == 'IDCANCEL') {
+            document.getElementById("btnCancelSave").value = msgReply.Result;
+          } else if (msgReply.Param == 'DeviceStatus') {
+            strDeviceStatus = msgReply.Result;
+          } else if (msgReply.Param == 'DeviceName') {
+            strDeviceName = msgReply.Result;
+            document.getElementById('deviceNameKey').innerHTML = strDeviceName + ":";
+          } else if (msgReply.Param == 'DeviceSerialno') {
+            strDeviceSerialno = msgReply.Result;
+            document.getElementById('deviceSerialKey').innerHTML = strDeviceSerialno + ":";
+          } else if (msgReply.Param == 'DeviceNotConnected') {
+            strDevNotConnect = msgReply.Result;
+          } else if (msgReply.Param == 'DescOfWebsocketError') {
+            strDescOfWebsocketError = msgReply.Result;
+          } else if (msgReply.Param == 'DescFailSetRFID') {
+            strDescFailSetRFID = msgReply.Result;
+          } else if (msgReply.Param == 'DescFailSetVIZ') {
+            strDescFailSetVIZ = msgReply.Resultl;
+          } else if (msgReply.Param == 'PlaceHolderCardTextInfo') {
+            // strPlaceHolderCardTextInfo = msgReply.Result;
+            // document.getElementById("msg").setAttribute("placeholder", strPlaceHolderCardTextInfo);
+          } else if (msgReply.Param == 'DescFailSendWebsocket') {
+            strDescFailSendWebsocket = msgReply.Result;
+          } else if (msgReply.Param == 'DeviceOffLine') {
+            strDeviceOffLine = msgReply.Result;
+          } else if (msgReply.Param == 'DeviceReconnected') {
+            strDeviceReconnected = msgReply.Result;
+          } else if (msgReply.Param == 'WebDescDeviceNotFound') {
+            strWebDescDeviceNotFound = msgReply.Result;
+          } else if (msgReply.Param == 'WebDescRequireRestartSvc') {
+            strWebDescRequireRestartSvc = msgReply.Result;
+          } else if (msgReply.Param == 'WebDescAskForSupport') {
+            strWebDescAskForSupport = msgReply.Result;
+          } else if (msgReply.Param == 'WebDescRequireReconnect') {
+            strWebDescRequireReconnect = msgReply.Result;
+          } else if (msgReply.Param == 'DeviceConnected') {
+            strDeviceConnected = msgReply.Result;
+          }
+        }
+      }
+    } else if (msgReply.Command == 'Set') {
+      if (msgReply.Succeeded == 'N') { /* Set指令未生效 */
+        if (msgReply.Operand == 'RFID') {
+          document.getElementById("msg").innerHTML = strDescFailSetRFID;
+        } else if (msgReply.Operand == 'VIZ') {
+          //document.getElementById("msg").innerHTML = strDescFailSetVIZ;
+        }
+      }
+    }
+  }
+  
+  /* 后台服务主动向web端发送消息，包括读卡信息、证件图像以及异常状态通知等 */
+  function processNotify(msgNotify) {
+    if (msgNotify.Command == 'Display') {
+      if (msgNotify.Param == strDeviceOffLine) {
+        clrDeviceStatus();
+        document.getElementById('deviceStatus').innerHTML = strWebDescDeviceNotFound; // "WebSocket已连接, 未检测到设备";
+        document.getElementById('deviceStatus').style.color = '#f00';
+      } else if (msgNotify.Param == strDeviceReconnected) {
+        getDeviceStatus();
+      }
+    } else if (msgNotify.Command == 'Reconnect') {
+      clrDeviceStatus();
+      document.getElementById('deviceStatus').innerHTML = strWebDescRequireReconnect; // "WebSocket服务要求web端重新建立连接，正在重连";
+      document.getElementById('deviceStatus').style.color = '#f00';
+      disConnect();
+      connect();
+    } else if (msgNotify.Command == 'AskSupport') {
+      clrDeviceStatus();
+      document.getElementById('deviceStatus').innerHTML = strWebDescAskForSupport; // "WebSocket服务遇到问题：" + msgNotify.Param;
+      document.getElementById('deviceStatus').style.color = '#f00';
+    } else if (msgNotify.Command == 'RestartService') {
+      /* disConnect(); */
+      document.getElementById('deviceStatus').innerHTML = strWebDescRequireRestartSvc; // "WebSocket服务需要重新启动，请联系管理员";
+      document.getElementById('deviceStatus').style.color = '#f00';
+    } else if (msgNotify.Command == 'Save') {
+      if (msgNotify.Operand == 'CardContentText') {
+        clrImages(false);
+        displayCardContent(msgNotify.Param);
+      } else if (msgNotify.Operand == 'Images') {
+        clrImages(false);
+        displayImages(msgNotify.Param);
+      }
+    } else if (msgNotify.Command == 'CardDetected') {
+      clrTextInfo()
+      clrImages(true);
+    }
+  }
+  
+  /*  解析证件文本信息（JSON格式）并展示到页面 */
+  function displayCardContent(cardContent) {
+    var domTextArea = document.getElementById('divTextArea');
+    var domTextItem;
+    var domKeySpan;
+    var domValInput;
+    
+    domTextArea.innerHTML = "";
+    
+    for (var key in cardContent) {
+      domTextItem = document.createElement('div');
+      domKeySpan = document.createElement('span');
+      domValInput = document.createElement('input');
+      
+      domTextItem.className = 'cTextItem';
+      
+      domKeySpan.className = 'cTextKey';
+      domKeySpan.innerText = key;
+      
+      domValInput.className = 'cTextValue';
+      domValInput.setAttribute('readonly', 'readonly');
+      domValInput.value = cardContent[key];
+      
+      domTextItem.appendChild(domKeySpan);
+      domTextItem.appendChild(domValInput);
+      domTextArea.appendChild(domTextItem);
+    }
+  }
+  
+  /* 如果存在名为 imageName的图像，则展示到页面对应的位置 */
+  function tryDisplayImage(images, imageName, domId) {
+    if (images.hasOwnProperty(imageName)) {
+      document.getElementById(domId).src = images[imageName];
+      
+      if (bigImageEmpty) {
+        document.getElementById("imageDisplay").src = images[imageName];
+        bigImageEmpty = false;
+      }
+    }
+  }
+  
+  /* 检查由后台发送的图像数据中包含哪些图像，并展示到页面 */
+  function displayImages(images) {
+    tryDisplayImage(images, "White", "imageWhite");
+    tryDisplayImage(images, "IR", "imageIR");
+    tryDisplayImage(images, "UV", "imageUV");
+    tryDisplayImage(images, "OcrHead", "imageOcrHead");
+    tryDisplayImage(images, "ChipHead", "imageChipHead");
+    tryDisplayImage(images, "SidHead", "imageChipHead");
+  }
+  
+  function clrTextInfo() {
+    document.getElementById("divTextArea").innerHTML = "";
+  }
+  
+  /* 清空页面上的图像信息 */
+  function clrImages(bForce) {
+    if (bForce || !bCardDetectedNotification) {
+      document.getElementById("imageWhite").src = "png/Home_pic_bgicon.png";
+      document.getElementById("imageIR").src = "png/Home_pic_bgicon.png";
+      document.getElementById("imageUV").src = "png/Home_pic_bgicon.png";
+      document.getElementById("imageOcrHead").src = "png/Home_pic_bgicon.png";
+      document.getElementById("imageChipHead").src = "png/Home_pic_bgicon.png";
+      document.getElementById("imageDisplay").src = "png/Home_pic_kong.png";
+      bigImageEmpty = true;
+    }
+  }
+  
+  /* 将发送数据的操作做了封装 */
+  function sendJson(jsonData) {
+    try {
+      if (websocket !== null) {
+        websocket.send(JSON.stringify(jsonData));
+      }
+    } catch (exception) {
+      //document.getElementById("msg").innerHTML = strDescFailSendWebsocket;
+    }
+  }
+  
+  /* 获取设备状态、核心版本，一次性发送4条指令 */
+  function getDeviceStatus() {
+    var request = {
+      Type: "Request",
+      Commands: [
+        {Command:"Get", Operand:"OnLineStatus"},  /* 获取设备在线状态 */
+        {Command:"Get", Operand:"DeviceName"},    /* 获取设备名称 */
+        {Command:"Get", Operand:"DeviceSerialNo"}, /* 获取设备序列号 */
+        {Command:"Get", Operand:"VersionInfo"} /* 获取核心版本信息 */
+      ]
+    };
+    
+    sendJson(request);
+  }
+  
+  /* 清空页面上显示的设备状态信息 */
+  function clrDeviceStatus() {
+    document.getElementById("deviceStatus").innerHTML = strDevNotConnect;
+    document.getElementById("deviceNameKey").style.display = "none";
+    document.getElementById('deviceName').innerHTML = "";
+    document.getElementById("deviceSerialKey").style.display = "none";
+    document.getElementById('deviceSerial').innerHTML = "";
+  }
+  
+  /* 设置读卡参数，默认识别芯片信息、识别版面信息 */
+  function setDefaultSettings() {
+    var request = {
+      Type: "Request",
+      Commands: [
+        {Command:"Set", Operand:"RFID", Param:"Y"}, /* 设置识别芯片信息 */
+        {Command:"Set", Operand:"VIZ", Param:"Y"}   /* 设置识别版面信息 */
+      ]
+    };
+    
+    sendJson(request);
+  }
+  
+  /* 对证件进行拍照 */
+  function takePhoto() {
+    var request = {
+      Type: "Request",
+      Command: "Set",
+      Operand: "TakePhoto",
+      Param: 0
+    };
+    var requestGetBase64 = {
+      Type: "Request",
+      Command: "Get",
+      Operand: "Base64Image"
+    };
+    
+    sendJson(request);
+    sendJson(requestGetBase64);
+  }
+  
+  
+  /* 选择要放大观看的图像 */
+  function showImage(domId) {
+    document.getElementById("imageDisplay").src = document.getElementById(domId).src;
+  }
+  
+  function showSettingPage() {
+    document.getElementById("settings").style.display = "block";
+    document.getElementById("control").style.display = "none";
+    document.getElementById("cardInfo").style.display = "none";
+  }
+  
+  function checkStatusToString(domId) {
+    if (document.getElementById(domId).checked) {
+      return "True";
+    } else {
+      return "False";
+    }
+  }
+  
+  function SaveSettings() {
+    bCardDetectedNotification = document.getElementById("CallBack").checked || document.getElementById("CardDetect").checked;
+    
+    var request = {
+      Type: "Request",
+      Commands: [
+        {Command:"Set", Operand:"VIZ", Param:checkStatusToString("RecogVIZ")},
+        {Command:"Set", Operand:"RFID", Param:checkStatusToString("RecogRFID")},
+        {Command:"Set", Operand:"Rejection", Param:checkStatusToString("Rejection")},
+        {Command:"Set", Operand:"IfEnableCallback", Param:checkStatusToString("CallBack")},
+        {Command:"Set", Operand:"IfNotifyCardDetected", Param:checkStatusToString("CardDetect")},
+        {Command:"Set", Operand:"MRZOnWhiteImage", Param:checkStatusToString("MRZOnWhite")},
+        {Command:"Set", Operand:"IfDetectUVDull", Param:checkStatusToString("UVDull")},
+        {Command:"Set", Operand:"IfDetectFibre", Param:checkStatusToString("Fibre")},
+        {Command:"Set", Operand:"IfCheckSourceType", Param:checkStatusToString("SourceType")},
+        {Command:"Set", Operand:"BarCodeRecog", Param:checkStatusToString("BarCode")}
+      ]
+    };
+    
+    sendJson(request);
+    
+    document.getElementById("settings").style.display = "none";
+    document.getElementById("control").style.display = "block";
+    document.getElementById("cardInfo").style.display = "block";
+  }
+  
+  function DonnotSaveSettings() {
+    document.getElementById("settings").style.display = "none";
+    document.getElementById("control").style.display = "block";
+    document.getElementById("cardInfo").style.display = "block";
+  }
+  
+  function getWebConstants() {
+    var request = {
+      Type: "Request",
+      Commands: [
+        {Command:"Get", Operand:"WebConstant", Param:"CardRecogSystem"},
+        {Command:"Get", Operand:"WebConstant", Param:"Connect"},
+        {Command:"Get", Operand:"WebConstant", Param:"Disconnect"},
+        {Command:"Get", Operand:"WebConstant", Param:"Save"},
+        {Command:"Get", Operand:"WebConstant", Param:"IDCANCEL"},
+        {Command:"Get", Operand:"WebConstant", Param:"DeviceStatus"},
+        {Command:"Get", Operand:"WebConstant", Param:"DeviceName"},
+        {Command:"Get", Operand:"WebConstant", Param:"DeviceSerialno"},
+        {Command:"Get", Operand:"WebConstant", Param:"DeviceNotConnected"},
+        {Command:"Get", Operand:"WebConstant", Param:"DescOfWebsocketError"},
+        {Command:"Get", Operand:"WebConstant", Param:"DescFailSetRFID"},
+        {Command:"Get", Operand:"WebConstant", Param:"DescFailSetVIZ"},
+        {Command:"Get", Operand:"WebConstant", Param:"PlaceHolderCardTextInfo"},
+        {Command:"Get", Operand:"WebConstant", Param:"DeviceOffLine"},
+        {Command:"Get", Operand:"WebConstant", Param:"DeviceReconnected"},
+        {Command:"Get", Operand:"WebConstant", Param:"DescFailSendWebsocket"},
+        {Command:"Get", Operand:"WebConstant", Param:"WebDescDeviceNotFound"},
+        {Command:"Get", Operand:"WebConstant", Param:"WebDescRequireRestartSvc"},
+        {Command:"Get", Operand:"WebConstant", Param:"WebDescAskForSupport"},
+        {Command:"Get", Operand:"WebConstant", Param:"WebDescRequireReconnect"},
+        {Command:"Get", Operand:"WebConstant", Param:"DeviceConnected"}
+      ]
+    };
+    
+    sendJson(request);
+  }
+  
+</script>
